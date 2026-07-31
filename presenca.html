@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Alice 10 Anos - Confirmação de Presença</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+            color: #4a4a4a;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            max-width: 700px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #f8bbd0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ec407a 0%, #ab47bc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .photo-container {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff0f6;
+        }
+
+        .photo-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 350px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            border: 4px solid #ffffff;
+        }
+
+        .intro-text {
+            padding: 20px 25px;
+            text-align: center;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            background-color: #ffffff;
+        }
+
+        .intro-text p + p {
+            margin-top: 12px;
+        }
+
+        .event-date {
+            display: inline-block;
+            background-color: #f8bbd0;
+            color: #880e4f;
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+        }
+
+        form {
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: #8e24aa;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #e1bee7;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #fdf2f8;
+            padding: 10px 15px;
+            border-radius: 10px;
+            border: 1px solid #fbcfe8;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .radio-option:hover {
+            background: #fce7f3;
+        }
+
+        .radio-option input[type="radio"] {
+            accent-color: #ec407a;
+            width: 18px;
+            height: 18px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s;
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #ab47bc;
+            box-shadow: 0 0 0 3px rgba(171, 71, 188, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 500px) {
+            .grid-2 {
+                display: block;
+            }
+
+            .grid-2 .form-group {
+                margin-bottom: 15px;
+            }
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #ec407a 0%, #ab47bc 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(236, 64, 122, 0.4);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-msg {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .status-msg.erro {
+            display: block;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
+        .confirmacao {
+            padding: 40px 25px 45px;
+            text-align: center;
+        }
+
+        .confirmacao .icone {
+            font-size: 3.5rem;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+
+        .confirmacao h2 {
+            font-size: 1.6rem;
+            color: #ad1457;
+            margin-bottom: 10px;
+        }
+
+        .confirmacao p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff0f6;
+            color: #880e4f;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Maria Alice 10 Anos 🎉🎈</h1>
+            <p>Confirmação de Presença (RSVP)</p>
+        </div>
+
+        <div class="photo-container">
+            <img src="maria-alice.jpg" alt="Foto da Maria Alice">
+        </div>
+
+        <div class="intro-text" id="intro">
+            <p>Estamos muito felizes em celebrar os 10 anos da Maria Alice e queremos compartilhar esse momento com pessoas especiais!
+            Para nos ajudar na organização da festa, pedimos a gentileza de preencher este formulário e confirmar sua presença até <strong>06/08</strong>.</p>
+            <p>A lista de convidados foi planejada com antecedência, considerando a criança convidada e 1 acompanhante adulto.</p>
+            <p>Agradecemos o carinho e esperamos vocês para uma tarde cheia de alegria e diversão! 💕🎉</p>
+            <span class="event-date">📅 Data da Festa: 26 de Agosto de 2026 às 19:30</span>
+        </div>
+
+        <div class="confirmacao hidden" id="confirmacao" role="status" aria-live="polite">
+            <div class="icone">🎉</div>
+            <h2>Presença confirmada!</h2>
+            <p id="confirmacao-texto">Obrigado por confirmar. Já anotamos vocês na nossa lista!</p>
+            <span class="event-date">📅 26 de Agosto de 2026 às 19:30</span>
+        </div>
+
+        <form id="rsvp-form">
+
+            <div class="form-group">
+                <label>Você poderá vir à festa?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="presenca" value="sim" required>
+                        Sim, com certeza!
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="presenca" value="nao">
+                        Infelizmente não poderei ir
+                    </label>
+                </div>
+            </div>
+
+            <div class="section-title">
+                👧🧒 Quem vamos receber?
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="nome_crianca">Nome da criança convidada:</label>
+                    <input type="text" id="nome_crianca" name="nome_crianca" placeholder="Nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="idade_crianca">Idade:</label>
+                    <input type="number" id="idade_crianca" name="idade_crianca" min="0" max="17" placeholder="Anos" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="nome_adulto">Nome do adulto responsável que vai acompanhar:</label>
+                <input type="text" id="nome_adulto" name="nome_adulto" placeholder="Nome completo do acompanhante" required>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btn-enviar">Enviar Confirmação</button>
+
+            <div id="status-msg" class="status-msg" role="status" aria-live="polite"></div>
+        </form>
+
+        <div class="footer">
+            Esperamos vocês para uma tarde cheia de alegria e diversão! 💕✨
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3lKPGYhoCkQjV85dsBuaavsoTYg3s4ybDnlrc6vNryWrayzsJKbPfTjjieuCwaolK_w/exec';
+
+        const form = document.getElementById('rsvp-form');
+        const botao = document.getElementById('btn-enviar');
+        const status = document.getElementById('status-msg');
+        const intro = document.getElementById('intro');
+        const confirmacao = document.getElementById('confirmacao');
+        const confirmacaoTexto = document.getElementById('confirmacao-texto');
+
+        function mostrarErro(texto) {
+            status.textContent = texto;
+            status.className = 'status-msg erro';
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            botao.disabled = true;
+            botao.textContent = 'Enviando...';
+            status.className = 'status-msg';
+
+            const campos = Object.fromEntries(new FormData(form).entries());
+
+            // Mapeia para as mesmas colunas da planilha usada pelo index.html:
+            // o convidado e a propria crianca e o adulto entra como responsavel.
+            // A crianca tambem vai em crianca1 para entrar na contagem por idade.
+            const dados = {
+                presenca: campos.presenca,
+                nome_convidado: campos.nome_crianca,
+                nome_responsavel: campos.nome_adulto,
+                crianca1_nome: campos.nome_crianca,
+                crianca1_idade: campos.idade_crianca
+            };
+
+            try {
+                // Content-Type text/plain evita o preflight CORS,
+                // que o Apps Script nao responde.
+                const resposta = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await resposta.json();
+
+                if (resultado.result !== 'success') {
+                    throw new Error(resultado.message || 'Falha ao gravar os dados.');
+                }
+
+                if (dados.presenca === 'nao') {
+                    confirmacao.querySelector('.icone').textContent = '💜';
+                    confirmacao.querySelector('h2').textContent = 'Resposta registrada!';
+                    confirmacaoTexto.textContent = 'Que pena que você não poderá vir. Obrigado por avisar!';
+                }
+
+                form.classList.add('hidden');
+                intro.classList.add('hidden');
+                confirmacao.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } catch (erro) {
+                mostrarErro('Não conseguimos enviar sua confirmação. Tente novamente.');
+                botao.disabled = false;
+                botao.textContent = 'Enviar Confirmação';
+            }
+        });
+    </script>
+
+</body>
+</html>

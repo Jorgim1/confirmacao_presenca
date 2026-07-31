@@ -337,9 +337,23 @@
             const item = document.createElement('li');
             item.className = ausente ? 'convidado ausente' : 'convidado';
 
+            const nomeConvidado = String(registro.nome_convidado || 'Sem nome').trim();
+            const criancas = coletarCriancas(registro);
+
+            // No formulario da crianca convidada, ela e o proprio convidado.
+            // Nesse caso a idade vai junto ao nome e a etiqueta nao se repete.
+            const propria = criancas.find(function (crianca) {
+                return crianca.nome.toLowerCase() === nomeConvidado.toLowerCase();
+            });
+            const acompanhantes = criancas.filter(function (crianca) {
+                return crianca !== propria;
+            });
+
             const nome = document.createElement('div');
             nome.className = 'nome';
-            nome.textContent = String(registro.nome_convidado || 'Sem nome').trim();
+            nome.textContent = propria && propria.idade !== null
+                ? nomeConvidado + ' (' + propria.idade + ' anos)'
+                : nomeConvidado;
             item.appendChild(nome);
 
             const responsavel = String(registro.nome_responsavel || '').trim();
@@ -350,11 +364,10 @@
                 item.appendChild(linha);
             }
 
-            const criancas = coletarCriancas(registro);
-            if (!ausente && criancas.length) {
+            if (!ausente && acompanhantes.length) {
                 const lista = document.createElement('ul');
                 lista.className = 'criancas';
-                criancas.forEach((crianca) => {
+                acompanhantes.forEach((crianca) => {
                     const tag = document.createElement('li');
                     tag.textContent = '👧 ' + crianca.rotulo;
                     lista.appendChild(tag);
