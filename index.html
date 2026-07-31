@@ -208,6 +208,36 @@
             box-shadow: 0 6px 15px rgba(236, 64, 122, 0.4);
         }
 
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-msg {
+            display: none;
+            margin-top: 15px;
+            padding: 14px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .status-msg.sucesso {
+            display: block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #a5d6a7;
+        }
+
+        .status-msg.erro {
+            display: block;
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef9a9a;
+        }
+
         .footer {
             text-align: center;
             padding: 20px;
@@ -233,7 +263,7 @@
             <span class="event-date">📅 Data da Festa: 26 de Agosto de 2026 às 19:30</span>
         </div>
 
-        <form action="#" method="POST" onsubmit="event.preventDefault(); alert('Obrigado por confirmar sua presença!');">
+        <form id="rsvp-form">
             
             <div class="form-group">
                 <label>Você e sua família poderão comparecer?</label>
@@ -298,13 +328,62 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit">Enviar Confirmação</button>
+            <button type="submit" class="btn-submit" id="btn-enviar">Enviar Confirmação</button>
+
+            <div id="status-msg" class="status-msg" role="status" aria-live="polite"></div>
         </form>
 
         <div class="footer">
             Agradecemos o carinho e esperamos vocês para uma celebração cheia de alegria e diversão! 💕✨
         </div>
     </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3lKPGYhoCkQjV85dsBuaavsoTYg3s4ybDnlrc6vNryWrayzsJKbPfTjjieuCwaolK_w/exec';
+
+        const form = document.getElementById('rsvp-form');
+        const botao = document.getElementById('btn-enviar');
+        const status = document.getElementById('status-msg');
+
+        function mostrarStatus(texto, tipo) {
+            status.textContent = texto;
+            status.className = 'status-msg ' + tipo;
+        }
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            botao.disabled = true;
+            botao.textContent = 'Enviando...';
+            status.className = 'status-msg';
+
+            const dados = Object.fromEntries(new FormData(form).entries());
+
+            try {
+                // Content-Type text/plain evita o preflight CORS,
+                // que o Apps Script nao responde.
+                const resposta = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(dados)
+                });
+
+                const resultado = await resposta.json();
+
+                if (resultado.result !== 'success') {
+                    throw new Error(resultado.message || 'Falha ao gravar os dados.');
+                }
+
+                form.reset();
+                mostrarStatus('Presença confirmada! Obrigado 💕', 'sucesso');
+                botao.textContent = 'Enviar Confirmação';
+            } catch (erro) {
+                mostrarStatus('Não conseguimos enviar sua confirmação. Tente novamente.', 'erro');
+                botao.disabled = false;
+                botao.textContent = 'Enviar Confirmação';
+            }
+        });
+    </script>
 
 </body>
 </html>
