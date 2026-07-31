@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maria Alice 10 Anos - Lista de Confirmados</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+            color: #4a4a4a;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid #f8bbd0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ec407a 0%, #ab47bc 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            padding: 25px 25px 5px;
+        }
+
+        .stat-card {
+            background-color: #fff0f6;
+            border: 1px solid #f8bbd0;
+            border-radius: 12px;
+            padding: 18px 12px;
+            text-align: center;
+        }
+
+        .stat-card .valor {
+            display: block;
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #ad1457;
+            line-height: 1.2;
+        }
+
+        .stat-card .rotulo {
+            font-size: 0.8rem;
+            color: #6a4a5a;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        @media (max-width: 520px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .conteudo {
+            padding: 25px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            color: #8e24aa;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px dashed #e1bee7;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .lista {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .convidado {
+            background-color: #fdf2f8;
+            border: 1px solid #fbcfe8;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .convidado.ausente {
+            background-color: #f7f7f7;
+            border-color: #e0e0e0;
+        }
+
+        .convidado .nome {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: #ad1457;
+        }
+
+        .convidado.ausente .nome {
+            color: #757575;
+        }
+
+        .convidado .responsavel {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .criancas {
+            list-style: none;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #f3c6dd;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .criancas li {
+            background-color: #ffffff;
+            border: 1px solid #f3e5f5;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            color: #6a1b9a;
+        }
+
+        .data-envio {
+            font-size: 0.78rem;
+            color: #999;
+            margin-top: 8px;
+        }
+
+        .aviso {
+            padding: 25px;
+            text-align: center;
+            color: #777;
+            font-size: 0.95rem;
+        }
+
+        .aviso.erro {
+            color: #c62828;
+        }
+
+        .vazio {
+            font-size: 0.92rem;
+            color: #999;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .acoes {
+            padding: 0 25px 25px;
+        }
+
+        .btn-atualizar {
+            width: 100%;
+            background: linear-gradient(135deg, #ec407a 0%, #ab47bc 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(236, 64, 122, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-atualizar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(236, 64, 122, 0.4);
+        }
+
+        .btn-atualizar:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Lista de Confirmados 🎉</h1>
+            <p>Maria Alice 10 Anos &middot; 26 de Agosto de 2026 às 19:30</p>
+        </div>
+
+        <div id="carregando" class="aviso" role="status" aria-live="polite">
+            Carregando confirmações...
+        </div>
+
+        <div id="erro" class="aviso erro hidden" role="alert"></div>
+
+        <div id="painel" class="hidden">
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="valor" id="stat-confirmados">0</span>
+                    <span class="rotulo">Confirmados</span>
+                </div>
+                <div class="stat-card">
+                    <span class="valor" id="stat-criancas">0</span>
+                    <span class="rotulo">Crianças</span>
+                </div>
+                <div class="stat-card">
+                    <span class="valor" id="stat-total">0</span>
+                    <span class="rotulo">Total de pessoas</span>
+                </div>
+            </div>
+
+            <div class="conteudo">
+                <div class="section-title">✅ Confirmaram presença</div>
+                <ul class="lista" id="lista-confirmados"></ul>
+                <p class="vazio hidden" id="vazio-confirmados">Nenhuma confirmação recebida ainda.</p>
+
+                <div class="section-title">😢 Não poderão ir</div>
+                <ul class="lista" id="lista-ausentes"></ul>
+                <p class="vazio hidden" id="vazio-ausentes">Ninguém recusou o convite.</p>
+            </div>
+        </div>
+
+        <div class="acoes">
+            <button type="button" class="btn-atualizar" id="btn-atualizar">Atualizar lista</button>
+        </div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3lKPGYhoCkQjV85dsBuaavsoTYg3s4ybDnlrc6vNryWrayzsJKbPfTjjieuCwaolK_w/exec';
+
+        const el = {
+            carregando: document.getElementById('carregando'),
+            erro: document.getElementById('erro'),
+            painel: document.getElementById('painel'),
+            confirmados: document.getElementById('lista-confirmados'),
+            ausentes: document.getElementById('lista-ausentes'),
+            vazioConfirmados: document.getElementById('vazio-confirmados'),
+            vazioAusentes: document.getElementById('vazio-ausentes'),
+            statConfirmados: document.getElementById('stat-confirmados'),
+            statCriancas: document.getElementById('stat-criancas'),
+            statTotal: document.getElementById('stat-total'),
+            botao: document.getElementById('btn-atualizar')
+        };
+
+        function formatarData(valor) {
+            if (!valor) return '';
+            const data = new Date(valor);
+            if (isNaN(data.getTime())) return '';
+            return data.toLocaleString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function coletarCriancas(registro) {
+            const criancas = [];
+            for (let i = 1; i <= 3; i++) {
+                const nome = String(registro['crianca' + i + '_nome'] || '').trim();
+                if (!nome) continue;
+                const idade = String(registro['crianca' + i + '_idade'] || '').trim();
+                criancas.push(idade ? nome + ' (' + idade + ' anos)' : nome);
+            }
+            return criancas;
+        }
+
+        // Monta os elementos via textContent para evitar injecao de HTML,
+        // ja que os dados vem de um formulario publico.
+        function criarCartao(registro, ausente) {
+            const item = document.createElement('li');
+            item.className = ausente ? 'convidado ausente' : 'convidado';
+
+            const nome = document.createElement('div');
+            nome.className = 'nome';
+            nome.textContent = String(registro.nome_convidado || 'Sem nome').trim();
+            item.appendChild(nome);
+
+            const responsavel = String(registro.nome_responsavel || '').trim();
+            if (responsavel) {
+                const linha = document.createElement('div');
+                linha.className = 'responsavel';
+                linha.textContent = 'Responsável: ' + responsavel;
+                item.appendChild(linha);
+            }
+
+            const criancas = coletarCriancas(registro);
+            if (!ausente && criancas.length) {
+                const lista = document.createElement('ul');
+                lista.className = 'criancas';
+                criancas.forEach((crianca) => {
+                    const tag = document.createElement('li');
+                    tag.textContent = '👧 ' + crianca;
+                    lista.appendChild(tag);
+                });
+                item.appendChild(lista);
+            }
+
+            const enviadoEm = formatarData(registro.data_hora);
+            if (enviadoEm) {
+                const data = document.createElement('div');
+                data.className = 'data-envio';
+                data.textContent = 'Enviado em ' + enviadoEm;
+                item.appendChild(data);
+            }
+
+            return item;
+        }
+
+        function renderizar(registros) {
+            el.confirmados.replaceChildren();
+            el.ausentes.replaceChildren();
+
+            const confirmados = [];
+            const ausentes = [];
+
+            registros.forEach((registro) => {
+                const resposta = String(registro.presenca || '').trim().toLowerCase();
+                if (resposta === 'sim') {
+                    confirmados.push(registro);
+                } else {
+                    ausentes.push(registro);
+                }
+            });
+
+            let totalCriancas = 0;
+            confirmados.forEach((registro) => {
+                totalCriancas += coletarCriancas(registro).length;
+                el.confirmados.appendChild(criarCartao(registro, false));
+            });
+
+            ausentes.forEach((registro) => {
+                el.ausentes.appendChild(criarCartao(registro, true));
+            });
+
+            el.statConfirmados.textContent = confirmados.length;
+            el.statCriancas.textContent = totalCriancas;
+            el.statTotal.textContent = confirmados.length + totalCriancas;
+
+            el.vazioConfirmados.classList.toggle('hidden', confirmados.length > 0);
+            el.vazioAusentes.classList.toggle('hidden', ausentes.length > 0);
+        }
+
+        async function carregar() {
+            el.botao.disabled = true;
+            el.botao.textContent = 'Carregando...';
+            el.erro.classList.add('hidden');
+
+            try {
+                const resposta = await fetch(SCRIPT_URL + '?t=' + Date.now());
+                const resultado = await resposta.json();
+
+                if (resultado.result !== 'success') {
+                    throw new Error(resultado.message || 'Resposta inesperada do servidor.');
+                }
+
+                renderizar(Array.isArray(resultado.data) ? resultado.data : []);
+                el.carregando.classList.add('hidden');
+                el.painel.classList.remove('hidden');
+            } catch (erro) {
+                el.carregando.classList.add('hidden');
+                el.erro.textContent = 'Não foi possível carregar a lista. Verifique se o script está publicado e tente novamente.';
+                el.erro.classList.remove('hidden');
+            } finally {
+                el.botao.disabled = false;
+                el.botao.textContent = 'Atualizar lista';
+            }
+        }
+
+        el.botao.addEventListener('click', carregar);
+        carregar();
+    </script>
+
+</body>
+</html>
