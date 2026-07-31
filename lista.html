@@ -52,7 +52,7 @@
 
         .stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             padding: 25px 25px 5px;
         }
@@ -81,10 +81,23 @@
             letter-spacing: 0.4px;
         }
 
-        @media (max-width: 520px) {
+        @media (max-width: 760px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 400px) {
             .stats {
                 grid-template-columns: 1fr;
             }
+        }
+
+        .nota-idade {
+            padding: 12px 25px 0;
+            font-size: 0.85rem;
+            color: #8d6e63;
+            font-style: italic;
         }
 
         .conteudo {
@@ -230,18 +243,24 @@
         <div id="painel" class="hidden">
             <div class="stats">
                 <div class="stat-card">
-                    <span class="valor" id="stat-confirmados">0</span>
-                    <span class="rotulo">Confirmados</span>
+                    <span class="valor" id="stat-adultos">0</span>
+                    <span class="rotulo">Adultos</span>
                 </div>
                 <div class="stat-card">
-                    <span class="valor" id="stat-criancas">0</span>
-                    <span class="rotulo">Crianças</span>
+                    <span class="valor" id="stat-criancas-maiores">0</span>
+                    <span class="rotulo">Crianças 9 anos ou mais</span>
+                </div>
+                <div class="stat-card">
+                    <span class="valor" id="stat-criancas-menores">0</span>
+                    <span class="rotulo">Crianças até 8 anos</span>
                 </div>
                 <div class="stat-card">
                     <span class="valor" id="stat-total">0</span>
                     <span class="rotulo">Total de pessoas</span>
                 </div>
             </div>
+
+            <p class="nota-idade hidden" id="nota-idade"></p>
 
             <div class="conteudo">
                 <div class="section-title">✅ Confirmaram presença</div>
@@ -270,9 +289,11 @@
             ausentes: document.getElementById('lista-ausentes'),
             vazioConfirmados: document.getElementById('vazio-confirmados'),
             vazioAusentes: document.getElementById('vazio-ausentes'),
-            statConfirmados: document.getElementById('stat-confirmados'),
-            statCriancas: document.getElementById('stat-criancas'),
+            statAdultos: document.getElementById('stat-adultos'),
+            statCriancasMaiores: document.getElementById('stat-criancas-maiores'),
+            statCriancasMenores: document.getElementById('stat-criancas-menores'),
             statTotal: document.getElementById('stat-total'),
+            notaIdade: document.getElementById('nota-idade'),
             botao: document.getElementById('btn-atualizar')
         };
 
@@ -289,13 +310,23 @@
             });
         }
 
+        const IDADE_CORTE = 8;
+
         function coletarCriancas(registro) {
             const criancas = [];
             for (let i = 1; i <= 3; i++) {
                 const nome = String(registro['crianca' + i + '_nome'] || '').trim();
                 if (!nome) continue;
-                const idade = String(registro['crianca' + i + '_idade'] || '').trim();
-                criancas.push(idade ? nome + ' (' + idade + ' anos)' : nome);
+
+                const bruta = String(registro['crianca' + i + '_idade'] || '').trim();
+                const idade = bruta === '' ? null : Number(bruta);
+                const valida = idade !== null && Number.isFinite(idade);
+
+                criancas.push({
+                    nome: nome,
+                    idade: valida ? idade : null,
+                    rotulo: valida ? nome + ' (' + idade + ' anos)' : nome + ' (idade não informada)'
+                });
             }
             return criancas;
         }
@@ -325,7 +356,7 @@
                 lista.className = 'criancas';
                 criancas.forEach((crianca) => {
                     const tag = document.createElement('li');
-                    tag.textContent = '👧 ' + crianca;
+                    tag.textContent = '👧 ' + crianca.rotulo;
                     lista.appendChild(tag);
                 });
                 item.appendChild(lista);
@@ -358,9 +389,22 @@
                 }
             });
 
+            let criancasMaiores = 0;
+            let criancasMenores = 0;
+            let semIdade = 0;
             let totalCriancas = 0;
+
             confirmados.forEach((registro) => {
-                totalCriancas += coletarCriancas(registro).length;
+                coletarCriancas(registro).forEach((crianca) => {
+                    totalCriancas++;
+                    if (crianca.idade === null) {
+                        semIdade++;
+                    } else if (crianca.idade > IDADE_CORTE) {
+                        criancasMaiores++;
+                    } else {
+                        criancasMenores++;
+                    }
+                });
                 el.confirmados.appendChild(criarCartao(registro, false));
             });
 
@@ -368,9 +412,20 @@
                 el.ausentes.appendChild(criarCartao(registro, true));
             });
 
-            el.statConfirmados.textContent = confirmados.length;
-            el.statCriancas.textContent = totalCriancas;
+            // Cada registro confirmado representa um adulto (o convidado).
+            el.statAdultos.textContent = confirmados.length;
+            el.statCriancasMaiores.textContent = criancasMaiores;
+            el.statCriancasMenores.textContent = criancasMenores;
             el.statTotal.textContent = confirmados.length + totalCriancas;
+
+            if (semIdade > 0) {
+                el.notaIdade.textContent = semIdade === 1
+                    ? '1 criança está sem idade informada e não entrou nas faixas acima.'
+                    : semIdade + ' crianças estão sem idade informada e não entraram nas faixas acima.';
+                el.notaIdade.classList.remove('hidden');
+            } else {
+                el.notaIdade.classList.add('hidden');
+            }
 
             el.vazioConfirmados.classList.toggle('hidden', confirmados.length > 0);
             el.vazioAusentes.classList.toggle('hidden', ausentes.length > 0);
